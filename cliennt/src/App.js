@@ -4,25 +4,42 @@ import './App.css';
 class App extends Component {
   constructor(props) {
     super(props);
-    this.state = {}
+    this.state = {unicorns: [{ name: ''}] }
   }
   getUnicorns() {
-    fetch('http://localhost:5000/unicorn')
+    return fetch('http://localhost:5000/unicorn')
       .then(res => res.json())
-      .then(res => console.log(res))
       .catch(err => err);
   }
-  componentDidMount() {
-    this.getUnicorns();
+  async componentWillMount() {
+    let herd = await this.getUnicorns();
+    this.setState({ unicorns: herd.unicorns})
   }
+
+  // Sorts the unicorns based off location
+  unicornSort(arr, str) {
+    return (
+      <ul>
+        { arr.map((unicorn) => {
+          if( unicorn.location === str) {
+            return (<li id={unicorn.name}>{unicorn.name}</li>)
+          } return <></>
+        })}
+      </ul>
+    )
+  }
+
   render() {
+    let listOfUnicorns = this.state.unicorns;
     return(
-      <React.Fragment>
-      <div>
-        <h3>Barn</h3>
-        <p> { this.state.unicorns[0].Barn[0].Name } </p>
-      </div>
-      </React.Fragment>
+      <>
+      <h3>Barn</h3>
+        {this.unicornSort(listOfUnicorns, 'Barn')}
+      <h3>Pasture</h3>
+      {this.unicornSort(listOfUnicorns, 'Pasture')}
+      <h3>Trail</h3>
+      {this.unicornSort(listOfUnicorns, 'Trail')}
+      </>
     )
   }
 }
